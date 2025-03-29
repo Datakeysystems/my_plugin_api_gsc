@@ -1,21 +1,25 @@
 openapi: 3.1.0
 info:
-  title: TG Content & SEO Custom Actions
-  description: API endpoints for generating SEO content.
+  title: TG Content & SEO API
+  description: API to fetch Google Search Console data for GPT content generation.
   version: 1.0.0
 
 servers:
   - url: https://my-plugin-api-gsc.onrender.com
 
 paths:
-  /seo/analyze_keywords:
+
+  /seo/top_keywords:
     get:
-      operationId: analyzeKeywords
-      summary: Analyze SEO keywords
-      description: Fetch keyword ranking data from Google Search Console.
+      operationId: getTopKeywords
+      summary: Get top-performing keywords
+      description: Returns top-performing keywords from Google Search Console.
+      security:
+        - OAuth2Google:
+            - "https://www.googleapis.com/auth/webmasters.readonly"
       responses:
         "200":
-          description: Success
+          description: Top keywords fetched successfully
           content:
             application/json:
               schema:
@@ -26,77 +30,62 @@ paths:
                     items:
                       type: string
       x-openai-action:
-        operationId: analyzeKeywords
-      security:
-        - OAuth2AuthorizationCode: 
-            - "https://www.googleapis.com/auth/webmasters.readonly"
+        operationId: getTopKeywords
 
-  /content/generate_blog:
-    post:
-      operationId: generateBlogPost
-      summary: Generate a blog post
-      description: Automatically create an SEO-optimized blog post.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                topic:
-                  type: string
-      responses:
-        "200":
-          description: Blog post created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  post:
-                    type: string
-      x-openai-action:
-        operationId: generateBlogPost
-      security:
-        - OAuth2AuthorizationCode:
-            - "https://www.googleapis.com/auth/webmasters.readonly"
-
-  /seo/get_top_performers:
+  /seo/top_pages:
     get:
-      operationId: getTopPerformers
-      summary: Get Top Performing Queries and Pages
-      description: Returns a list of queries/pages with the highest clicks or CTR in Google Search Console.
+      operationId: getTopPages
+      summary: Get top-performing pages
+      description: Returns top-performing pages from Google Search Console.
       security:
-        - OAuth2AuthorizationCode:
+        - OAuth2Google:
             - "https://www.googleapis.com/auth/webmasters.readonly"
       responses:
         "200":
-          description: Top performance data
+          description: Top pages fetched successfully
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  topQueries:
-                    type: array
-                    items:
-                      type: string
-                  topPages:
+                  pages:
                     type: array
                     items:
                       type: string
       x-openai-action:
-        operationId: getTopPerformers
+        operationId: getTopPages
+
+  /seo/low_ctr_queries:
+    get:
+      operationId: getLowCTRQueries
+      summary: Get queries with low CTR
+      description: Returns queries with high impressions but low click-through rates from Google Search Console.
+      security:
+        - OAuth2Google:
+            - "https://www.googleapis.com/auth/webmasters.readonly"
+      responses:
+        "200":
+          description: Low CTR queries fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  queries:
+                    type: array
+                    items:
+                      type: string
+      x-openai-action:
+        operationId: getLowCTRQueries
 
 components:
   securitySchemes:
-    OAuth2AuthorizationCode:
+    OAuth2Google:
       type: oauth2
       flows:
         authorizationCode:
           authorizationUrl: https://accounts.google.com/o/oauth2/v2/auth
           tokenUrl: https://oauth2.googleapis.com/token
           scopes:
-            "https://www.googleapis.com/auth/webmasters.readonly": "Read-only access to GSC data"
-
+            "https://www.googleapis.com/auth/webmasters.readonly": "Read access to Google Search Console data"
   schemas: {}
