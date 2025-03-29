@@ -1,35 +1,25 @@
+// server.js (Node.js/Express simplified example)
+
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
-app.use(express.json());
 
-// Serve openapi.yaml publicly
-app.get('/openapi.yaml', (req, res) => {
-  res.sendFile(path.join(__dirname, 'openapi.yaml'));
+// Example routes (replace with real logic calling Google Search Console)
+app.get('/seo/top_keywords', (req, res) => {
+  res.json({ keywords: ['keyword1', 'keyword2', 'keyword3'] });
 });
 
-// Basic endpoints (mock implementation)
-
-app.get('/seo/analyze_keywords', (req, res) => {
-  res.json({ keywords: ['example keyword 1', 'example keyword 2'] });
+app.get('/seo/top_pages', (req, res) => {
+  res.json({ pages: ['page1', 'page2', 'page3'] });
 });
 
-app.get('/seo/get_top_performers', (req, res) => {
-  res.json({
-    topQueries: ['top query 1', 'top query 2'],
-    topPages: ['top page 1', 'top page 2']
-  });
-});
-
-app.post('/content/generate_blog', (req, res) => {
-  const { topic } = req.body;
-  res.json({ post: `This is an SEO blog post about ${topic}.` });
+app.get('/seo/low_ctr_queries', (req, res) => {
+  res.json({ queries: ['low ctr query1', 'low ctr query2'] });
 });
 
 app.listen(port, () => {
-  console.log(`API running on port ${port}`);
+  console.log(`API running at port ${port}`);
 });
