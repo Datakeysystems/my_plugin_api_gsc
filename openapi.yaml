@@ -1,0 +1,102 @@
+openapi: 3.1.0
+info:
+  title: TG Content & SEO Custom Actions
+  description: API endpoints for generating SEO content.
+  version: 1.0.0
+
+servers:
+  - url: https://api.example.com
+
+paths:
+  /seo/analyze_keywords:
+    get:
+      operationId: analyzeKeywords
+      summary: Analyze SEO keywords
+      description: Fetch keyword ranking data from Google Search Console.
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  keywords:
+                    type: array
+                    items:
+                      type: string
+      x-openai-action:
+        operationId: analyzeKeywords
+      security:
+        - OAuth2AuthorizationCode: 
+            - "https://www.googleapis.com/auth/webmasters.readonly"
+
+  /content/generate_blog:
+    post:
+      operationId: generateBlogPost
+      summary: Generate a blog post
+      description: Automatically create an SEO-optimized blog post.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                topic:
+                  type: string
+      responses:
+        "200":
+          description: Blog post created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  post:
+                    type: string
+      x-openai-action:
+        operationId: generateBlogPost
+      security:
+        - OAuth2AuthorizationCode:
+            - "https://www.googleapis.com/auth/webmasters.readonly"
+
+  /seo/get_top_performers:
+    get:
+      operationId: getTopPerformers
+      summary: Get Top Performing Queries and Pages
+      description: Returns a list of queries/pages with the highest clicks or CTR in Google Search Console.
+      security:
+        - OAuth2AuthorizationCode:
+            - "https://www.googleapis.com/auth/webmasters.readonly"
+      responses:
+        "200":
+          description: Top performance data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  topQueries:
+                    type: array
+                    items:
+                      type: string
+                  topPages:
+                    type: array
+                    items:
+                      type: string
+      x-openai-action:
+        operationId: getTopPerformers
+
+components:
+  securitySchemes:
+    OAuth2AuthorizationCode:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://accounts.google.com/o/oauth2/v2/auth
+          tokenUrl: https://oauth2.googleapis.com/token
+          scopes:
+            "https://www.googleapis.com/auth/webmasters.readonly": "Read-only access to GSC data"
+
+  schemas: {}
